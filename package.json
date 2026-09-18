@@ -21,7 +21,8 @@
     "ejs": "^6.0.1",
     "express": "^5.2.1",
     "hbs": "^4.3.1",
-    "helmet": "^8.3.0"
+    "helmet": "^8.3.0",
+    "pug": "^3.0.4"
   },
   "devDependencies": {
     "@ljharb/tsconfig": "^0.3.2"

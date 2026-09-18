@@ -9,7 +9,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'temp_files/ejs'));
+app.set('view engine', 'hbs');
+app.set('views', [path.join(__dirname, 'temp_files/ejs'), path.join(__dirname, 'temp_files/hbs')]);
 
 app.get('/', (req, res) => {
   res.send('Hello, World!');
@@ -18,6 +19,10 @@ app.get('/', (req, res) => {
 app.get('/ejs', (req, res) => {
   res.render('index');
 });
+
+app.get('/hbs', (req, res) => {
+  res.render('index');
+}); 
 
 app.get('/', (req, res) => {
   res.send('Hello, World!');

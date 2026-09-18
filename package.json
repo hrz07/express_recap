@@ -1,0 +1,23 @@
+{
+  "name": "express_recap",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000e\u0000x\u0000p\u0000r\u0000e\u0000s\u0000s\u0000_\u0000r\u0000e\u0000c\u0000a\u0000p\u0000\r\u0000 \u0000",
+  "homepage": "https://github.com/hrz07/express_recap#readme",
+  "bugs": {
+    "url": "https://github.com/hrz07/express_recap/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hrz07/express_recap.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}

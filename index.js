@@ -5,23 +5,20 @@ const helmet = require('helmet');
 const path = require('path');
 const templeteController = require('./controllers/templete');
 const tempRoute = require('./routes/templete.route');
+const data = require('./MOCK_DATA.json');
 
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/temp', tempRoute);
-
 app.set('view engine', 'ejs');
-// app.set('view engine', 'hbs');
-// app.set('view engine', 'pug');
 app.set('views', [
   path.join(__dirname, 'temp_files/ejs'),
-  // path.join(__dirname, 'temp_files/hbs'),
-  // path.join(__dirname, 'temp_files/pug')
 ]);
 
+
 app.get('/', (req, res) => {
-  res.send('Hello, World!');
+  res.send('Hello World!');
 });
 
 

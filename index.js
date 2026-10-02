@@ -32,35 +32,35 @@ app.get('/user/:id', (req, res) => {
   res.json(user);
 });
 
-app.post('/user', async (req, res) => {
-  const newUser = { ...req.body, id: data.length + 1 };
-  data.push(newUser);
-  const filePath = path.join(__dirname, 'MOCK_DATA.json');
-  try {
-    await fs.promises.writeFile(filePath, JSON.stringify(data));
-    res.status(201).send('User added successfully');
-  } catch (err) {
-    res.status(500).send('Internal Server Error');
-  }
-});
-
-app.delete('/user', async (req, res) => {
-  const userId = req.body.id;
-  const userIndex = data.findIndex((user) => user.id === parseInt(userId));
-
-  if (userIndex === -1) {
-    return res.status(404).send('User not found');
-  }
-  data.splice(userIndex, 1);
-  try {
+app.route('/user')
+  .post(async (req, res) => {
+    const newUser = { ...req.body, id: data.length + 1 };
+    data.push(newUser);
     const filePath = path.join(__dirname, 'MOCK_DATA.json');
-    await fs.promises.writeFile(filePath, JSON.stringify(data));
-    res.status(200).send('User deleted successfully');
-  } catch (err) {
-    console.error('Error writing to file:', err);
-    return res.status(500).send('Internal Server Error');
-  }
-});
+    try {
+      await fs.promises.writeFile(filePath, JSON.stringify(data));
+      res.status(201).send('User added successfully');
+    } catch (err) {
+      res.status(500).send('Internal Server Error');
+    }
+  })
+  .delete(async (req, res) => {
+    const userId = req.body.id;
+    const userIndex = data.findIndex((user) => user.id === parseInt(userId));
+
+    if (userIndex === -1) {
+      return res.status(404).send('User not found');
+    }
+    data.splice(userIndex, 1);
+    try {
+      const filePath = path.join(__dirname, 'MOCK_DATA.json');
+      await fs.promises.writeFile(filePath, JSON.stringify(data));
+      res.status(200).send('User deleted successfully');
+    } catch (err) {
+      console.error('Error writing to file:', err);
+      return res.status(500).send('Internal Server Error');
+    }
+  });
 
 app.get('/hbs', (req, res) => {
   res.render('index');

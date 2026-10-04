@@ -61,18 +61,23 @@ app.get('/users', async (req, res) => {
       console.error('Error fetching users:', err);
       res.status(500).send('Internal Server Error');
     });
-  // res.json(data);
 });
 
-app.get('/user/:id', (req, res) => {
+app.get('/user/:id', async (req, res) => {
   const userId = req.params.id;
-  const user = data.find((user) => user.id === parseInt(userId));
-  res.json(user);
+  await User.findById(userId)
+   .then((user) => {
+     res.status(200).json(user);
+   })
+   .catch((err) => {
+     console.error('Error fetching user:', err);
+     res.status(500).send('Internal Server Error');
+   });
 });
 
 app.route('/user')
   .post(async (req, res) => {
-    const newUser = User.create({ ...req.body })
+    await User.create({ ...req.body })
       .then((user) => {
         res.status(201).send('User added successfully');
       })

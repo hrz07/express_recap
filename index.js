@@ -7,7 +7,10 @@ const fs = require('fs');
 const templeteController = require('./controllers/templete');
 const tempRoute = require('./routes/templete.route');
 const data = require('./MOCK_DATA.json');
+const mongoose = require('mongoose');
 
+
+// middleware
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -17,13 +20,48 @@ app.set('views', [
   path.join(__dirname, 'temp_files/ejs'),
 ]);
 
+// mongoDB connection
 
+mongoose.connect('mongodb://127.0.0.1:27017/userDB')
+  .then(() => { console.log('Connected to MongoDB') })
+  .catch((err) => { console.error('Error connecting to MongoDB:', err) });
+
+const userSchema = new mongoose.Schema({
+  first_name: {
+    type: String,
+    required: true,
+  },
+  last_name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  gender: {
+    type: String,
+  }
+});
+
+const User = mongoose.model('User', userSchema);
+
+// api
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.get('/users', (req, res) => {
-  res.json(data);
+app.get('/users', async (req, res) => {
+  await User.find({})
+    .then((users) => {
+      res.status(200).json(users);
+    })
+    .catch((err) => {
+      console.error('Error fetching users:', err);
+      res.status(500).send('Internal Server Error');
+    });
+  // res.json(data);
 });
 
 app.get('/user/:id', (req, res) => {
@@ -34,15 +72,14 @@ app.get('/user/:id', (req, res) => {
 
 app.route('/user')
   .post(async (req, res) => {
-    const newUser = { ...req.body, id: data.length + 1 };
-    data.push(newUser);
-    const filePath = path.join(__dirname, 'MOCK_DATA.json');
-    try {
-      await fs.promises.writeFile(filePath, JSON.stringify(data));
-      res.status(201).send('User added successfully');
-    } catch (err) {
-      res.status(500).send('Internal Server Error');
-    }
+    const newUser = User.create({ ...req.body })
+      .then((user) => {
+        res.status(201).send('User added successfully');
+      })
+      .catch((err) => {
+        console.error('Error creating user:', err);
+        res.status(500).send('Internal Server Error');
+      });
   })
   .patch(async (req, res) => {
     const userId = req.body.id;

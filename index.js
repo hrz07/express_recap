@@ -70,8 +70,7 @@ app.get('/user/:id', async (req, res) => {
      res.status(200).json(user);
    })
    .catch((err) => {
-     console.error('Error fetching user:', err);
-     res.status(500).send('Internal Server Error');
+     res.status(500).send('Internal Server Error: ' + err.message);
    });
 });
 
@@ -83,7 +82,7 @@ app.route('/user')
       })
       .catch((err) => {
         console.error('Error creating user:', err);
-        res.status(500).send('Internal Server Error');
+        res.status(500).send('Internal Server Error: ' + err.message);
       });
   })
   .patch(async (req, res) => {

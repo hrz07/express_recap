@@ -43,7 +43,9 @@ const userSchema = new mongoose.Schema({
   gender: {
     type: String,
   }
-});
+},
+  { timestamps: true }
+);
 
 const User = mongoose.model('User', userSchema);
 
@@ -66,12 +68,12 @@ app.get('/users', async (req, res) => {
 app.get('/user/:id', async (req, res) => {
   const userId = req.params.id;
   await User.findById(userId)
-   .then((user) => {
-     res.status(200).json(user);
-   })
-   .catch((err) => {
-     res.status(500).send('Internal Server Error: ' + err.message);
-   });
+    .then((user) => {
+      res.status(200).json(user);
+    })
+    .catch((err) => {
+      res.status(500).send('Internal Server Error: ' + err.message);
+    });
 });
 
 app.route('/user')

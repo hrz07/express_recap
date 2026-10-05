@@ -3,12 +3,10 @@ const app = express();
 const port = 3000;
 const helmet = require('helmet');
 const path = require('path');
-const fs = require('fs');
 const templeteController = require('./controllers/templete');
 const tempRoute = require('./routes/templete.route');
-const data = require('./MOCK_DATA.json');
 const mongoose = require('mongoose');
-const User = require('./models/user');
+const userRoute = require('./routes/user.route');
 
 
 // middleware
@@ -16,6 +14,7 @@ app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use('/temp', tempRoute);
+app.use('/users', userRoute);
 app.set('view engine', 'ejs');
 app.set('views', [
   path.join(__dirname, 'temp_files/ejs'),
@@ -31,79 +30,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/userDB')
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
-
-app.get('/users', async (req, res) => {
-  await User.find({})
-    .then((users) => {
-      res.status(200).json(users);
-    })
-    .catch((err) => {
-      console.error('Error fetching users:', err);
-      res.status(500).send('Internal Server Error');
-    });
-});
-
-app.get('/user/:id', async (req, res) => {
-  const userId = req.params.id;
-  await User.findById(userId)
-    .then((user) => {
-      res.status(200).json(user);
-    })
-    .catch((err) => {
-      res.status(500).send('Internal Server Error: ' + err.message);
-    });
-});
-
-app.route('/user')
-  .post(async (req, res) => {
-    await User.create({ ...req.body })
-      .then((user) => {
-        res.status(201).send('User added successfully');
-      })
-      .catch((err) => {
-        console.error('Error creating user:', err);
-        res.status(500).send('Internal Server Error: ' + err.message);
-      });
-  })
-  .patch(async (req, res) => {
-    const userId = req.body.id;
-    const userIndex = data.findIndex((user) => user.id === parseInt(userId));
-    if (userIndex === -1) {
-      return res.status(404).send('User not found');
-    }
-    data[userIndex] = { ...data[userIndex], ...req.body, id: parseInt(userId) };
-    try {
-      const filePath = path.join(__dirname, 'MOCK_DATA.json');
-      await fs.promises.writeFile(filePath, JSON.stringify(data));
-      res.status(200).send('User updated successfully');
-    } catch (err) {
-      console.error('Error writing to file:', err);
-      return res.status(500).send('Internal Server Error');
-    }
-  })
-  .delete(async (req, res) => {
-    const userId = req.body.id;
-    await User.findByIdAndDelete(userId)
-      .then((user) => {
-        if (!user) {
-          return res.status(404).send('User not found');
-        }
-        res.status(200).send('User deleted successfully');
-      })
-      .catch((err) => {
-        console.error('Error deleting user:', err);
-        res.status(500).send('Internal Server Error: ' + err.message);
-      });
-  });
-
-app.get('/hbs', (req, res) => {
-  res.render('index');
-});
-
-app.get('/pug', (req, res) => {
-  res.render('temp');
-});
-
 
 
 app.listen(port, () => {

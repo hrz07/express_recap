@@ -8,6 +8,7 @@ const templeteController = require('./controllers/templete');
 const tempRoute = require('./routes/templete.route');
 const data = require('./MOCK_DATA.json');
 const mongoose = require('mongoose');
+const User = require('./models/user');
 
 
 // middleware
@@ -25,29 +26,6 @@ app.set('views', [
 mongoose.connect('mongodb://127.0.0.1:27017/userDB')
   .then(() => { console.log('Connected to MongoDB') })
   .catch((err) => { console.error('Error connecting to MongoDB:', err) });
-
-const userSchema = new mongoose.Schema({
-  first_name: {
-    type: String,
-    required: true,
-  },
-  last_name: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  gender: {
-    type: String,
-  }
-},
-  { timestamps: true }
-);
-
-const User = mongoose.model('User', userSchema);
 
 // api
 app.get('/', (req, res) => {
